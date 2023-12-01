@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hair_salon/constants/colors.dart';
+import 'package:hair_salon/view/verify.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -52,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
                             SizedBox(height: size.height * 0.08),
                             TextField(
                               controller: _number,
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 hintText: "Enter Mobile Number",
                                 hintStyle: const TextStyle(
@@ -67,20 +69,30 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             SizedBox(height: size.height * 0.05),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 28, 62, 101),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text(
-                                    'CONTINUE',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      // fontWeight: FontWeight.bold,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const VerificationPage(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 28, 62, 101),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: Text(
+                                      'CONTINUE',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        // fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
