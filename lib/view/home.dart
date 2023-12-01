@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hair_salon/widgets/category_listtile.dart';
 import 'package:hair_salon/widgets/featured_listitle.dart';
+import 'package:hair_salon/widgets/most_pop_listtile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -44,6 +45,24 @@ class _HomePageState extends State<HomePage> {
     false,
     false,
   ];
+  final List<String> name = [
+    "Tanishx Unisex Salon",
+    "Royal Touch Salon",
+    "Hair Direction Salon"
+  ];
+  final List<String> loc = [
+    "Jankpuri, New Delhi",
+    "Tilak Nagar, New Delhi",
+    "Tilak Nagar, New Delhi",
+  ];
+  final List<String> image = [
+    "assets/images/barber1.jpeg",
+    "assets/images/barber4.jpeg",
+    "assets/images/barber3.jpg"
+  ];
+  final List<String> dist = ["1.2km", "800m", "900m"];
+  final List<String> reviews = ["256", "154", "156"];
+  final List<String> stars = ["4.8", "4.5", "4.6"];
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -273,6 +292,7 @@ class _HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                SizedBox(height: size.height * 0.015),
                 SizedBox(
                   height: size.height * 0.062,
                   width: size.width,
@@ -324,6 +344,23 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   ),
+                ),
+                SizedBox(height: size.height * 0.02),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) => MostPopListTile(
+                    image: image[index],
+                    name: name[index],
+                    loc: loc[index],
+                    dist: dist[index],
+                    stars: stars[index],
+                    reviews: reviews[index],
+                  ),
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 15,
+                  ),
+                  itemCount: 3,
                 ),
               ],
             ),
