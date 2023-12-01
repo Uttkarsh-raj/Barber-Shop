@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CategoryListTile extends StatelessWidget {
-  const CategoryListTile({super.key});
+  final String icon, title;
+  const CategoryListTile({super.key, required this.icon, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +22,15 @@ class CategoryListTile extends StatelessWidget {
                 color: Colors.grey[100],
               ),
               child: Center(
-                child: Image.asset('assets/icons/scissors.png'),
+                child: Image.asset(icon),
               ),
             ),
             const SizedBox(height: 10),
             Text(
-              'Hair Cut',
+              title,
               style: TextStyle(
                 color: Colors.grey[800],
-                fontSize: 16,
+                fontSize: 14,
                 letterSpacing: 0.02,
                 fontWeight: FontWeight.w500,
               ),

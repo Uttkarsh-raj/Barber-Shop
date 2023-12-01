@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hair_salon/view/home.dart';
-import 'package:hair_salon/view/login.dart';
 
 void main() {
   runApp(const MyApp());

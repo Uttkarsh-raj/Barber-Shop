@@ -10,6 +10,40 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final List<String> icons = [
+    'assets/icons/scissors.png',
+    'assets/icons/makeup_icon.png',
+    'assets/icons/hair_str_icon.png',
+    'assets/icons/mani_icon.png',
+    'assets/icons/spa_icon.png',
+    'assets/icons/b_trim_icon.png',
+  ];
+  final List<String> title = [
+    'Hair Cut',
+    'Makeup',
+    'Straightening',
+    'Mani-Pedi',
+    'Spa/Massage',
+    'Beard Trimming',
+  ];
+  final List<String> services = [
+    'All',
+    'Hair Cut',
+    'Makeup',
+    'Straightening',
+    'Mani-Pedi',
+    'Spa/Massage',
+    'Beard Trimming',
+  ];
+  final List<bool> values = [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ];
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -214,7 +248,83 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 SizedBox(height: size.height * 0.02),
-                CategoryListTile(),
+                GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 0.0,
+                    mainAxisSpacing: 0.0,
+                    childAspectRatio: 0.7,
+                  ),
+                  itemBuilder: (context, index) => CategoryListTile(
+                    icon: icons[index],
+                    title: title[index],
+                  ),
+                  itemCount: 6,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                ),
+                SizedBox(height: size.height * 0.02),
+                const Text(
+                  'Most Popular Services',
+                  style: TextStyle(
+                    // color: Colors.white,
+                    fontSize: 20,
+                    letterSpacing: 0.02,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.062,
+                  width: size.width,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: services.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 7, bottom: 7),
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(
+                              () {
+                                for (var i = 0; i < values.length; i++) {
+                                  if (i == index) {
+                                    values[i] = true;
+                                  } else {
+                                    values[i] = false;
+                                  }
+                                }
+                              },
+                            );
+                          },
+                          child: Container(
+                            // width: size.width * 0.25,
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: values[index]
+                                  ? const Color.fromARGB(255, 10, 53, 87)
+                                  : const Color.fromARGB(255, 198, 229, 255),
+                              borderRadius: BorderRadius.circular(27),
+                            ),
+                            child: Center(
+                              child: Text(
+                                services[index],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: values[index]
+                                      ? Colors.white
+                                      : Colors.blueGrey[900],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
