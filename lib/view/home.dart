@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hair_salon/view/categories.dart';
 import 'package:hair_salon/widgets/category_listtile.dart';
 import 'package:hair_salon/widgets/featured_listitle.dart';
 import 'package:hair_salon/widgets/most_pop_listtile.dart';
@@ -243,10 +244,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Category',
                       style: TextStyle(
                         // color: Colors.white,
@@ -255,13 +256,22 @@ class _HomePageState extends State<HomePage> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Text(
-                      'View All',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 44, 127, 195),
-                        fontSize: 16,
-                        letterSpacing: 0.02,
-                        fontWeight: FontWeight.w400,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const CategoriesPage(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'View All',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 44, 127, 195),
+                          fontSize: 16,
+                          letterSpacing: 0.02,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                   ],
