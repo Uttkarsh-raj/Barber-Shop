@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_salon/view/categories.dart';
+import 'package:hair_salon/view/check_auth.dart';
 import 'package:hair_salon/widgets/category_listtile.dart';
 import 'package:hair_salon/widgets/featured_listitle.dart';
 import 'package:hair_salon/widgets/most_pop_listtile.dart';
@@ -371,6 +373,46 @@ class _HomePageState extends State<HomePage> {
                     height: 15,
                   ),
                   itemCount: 3,
+                ),
+                SizedBox(height: size.height * 0.02),
+                GestureDetector(
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                          builder: (context) => const MainAuthPage()),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 28, 62, 101),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'LOG OUT',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                // fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Icon(
+                              Icons.logout,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

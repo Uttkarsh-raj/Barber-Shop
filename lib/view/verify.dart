@@ -1,11 +1,15 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_salon/constants/colors.dart';
+import 'package:hair_salon/view/check_auth.dart';
+import 'package:hair_salon/view/home.dart';
+import 'package:hair_salon/view/login.dart';
 
 class VerificationPage extends StatefulWidget {
-  const VerificationPage({super.key});
-
+  const VerificationPage({super.key, required this.number});
+  final String number;
   @override
   State<VerificationPage> createState() => _VerificationPageState();
 }
@@ -20,11 +24,50 @@ class _VerificationPageState extends State<VerificationPage> {
   late Timer _timer;
   int _secondsRemaining = 60;
   bool _isResendButtonEnabled = false;
+  String idVerification = '';
+
+  void verify() async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+91${widget.number}',
+      verificationCompleted: (PhoneAuthCredential credential) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.toString(),
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        setState(() {
+          idVerification = verificationId;
+        });
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-
+    verify();
     // Start the countdown when the screen is loaded
     _startCountdown();
   }
@@ -53,6 +96,7 @@ class _VerificationPageState extends State<VerificationPage> {
       });
 
       // Start the countdown again
+      verify();
       _startCountdown();
     }
   }
@@ -195,20 +239,58 @@ class _VerificationPageState extends State<VerificationPage> {
                                 ),
                               ),
                               SizedBox(height: size.height * 0.03),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 28, 62, 101),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Center(
-                                    child: Text(
-                                      'CONTINUE',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        // fontWeight: FontWeight.bold,
+                              GestureDetector(
+                                onTap: () async {
+                                  try {
+                                    String smsCode = '';
+                                    for (var digit in _otpControllers) {
+                                      smsCode =
+                                          '$smsCode${digit.text.trim().toString()}';
+                                    }
+                                    PhoneAuthCredential credential =
+                                        PhoneAuthProvider.credential(
+                                      verificationId: idVerification,
+                                      smsCode: smsCode,
+                                    );
+                                    await FirebaseAuth.instance
+                                        .signInWithCredential(credential);
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MainAuthPage(),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          e.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromARGB(255, 28, 62, 101),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: Text(
+                                        'CONTINUE',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          // fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
