@@ -56,7 +56,7 @@ class _FeaturedListTileState extends State<FeaturedListTile> {
                 color: Colors.white,
               ),
               child: Padding(
-                padding: const EdgeInsets.all(13.0),
+                padding: EdgeInsets.all(size.height * 0.01),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -75,7 +75,7 @@ class _FeaturedListTileState extends State<FeaturedListTile> {
                           'Rs ${widget.nPrice}',
                           style: const TextStyle(
                             // color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 15,
                             letterSpacing: 0.02,
                             fontWeight: FontWeight.w600,
                           ),
@@ -86,7 +86,7 @@ class _FeaturedListTileState extends State<FeaturedListTile> {
                           style: const TextStyle(
                             decoration: TextDecoration.lineThrough,
                             color: Colors.grey,
-                            fontSize: 14,
+                            fontSize: 13,
                             letterSpacing: 0.02,
                             fontWeight: FontWeight.w600,
                           ),

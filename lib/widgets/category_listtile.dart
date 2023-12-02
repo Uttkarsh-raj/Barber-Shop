@@ -11,7 +11,7 @@ class CategoryListTile extends StatelessWidget {
       height: size.height * 0.21,
       width: size.width * 0.39,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(size.height * 0.004),
         child: Column(
           children: [
             Container(
@@ -28,6 +28,8 @@ class CategoryListTile extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               title,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
               style: TextStyle(
                 color: Colors.grey[800],
                 fontSize: 14,
