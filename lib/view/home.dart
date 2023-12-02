@@ -1,7 +1,10 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_salon/view/categories.dart';
 import 'package:hair_salon/view/check_auth.dart';
+import 'package:hair_salon/widgets/banners_listile.dart';
 import 'package:hair_salon/widgets/category_listtile.dart';
 import 'package:hair_salon/widgets/featured_listitle.dart';
 import 'package:hair_salon/widgets/most_pop_listtile.dart';
@@ -14,6 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<String> banners = [];
   final List<String> icons = [
     'assets/icons/scissors.png',
     'assets/icons/makeup_icon.png',
@@ -66,6 +70,58 @@ class _HomePageState extends State<HomePage> {
   final List<String> dist = ["1.2km", "800m", "900m"];
   final List<String> reviews = ["256", "154", "156"];
   final List<String> stars = ["4.8", "4.5", "4.6"];
+  bool loading = true;
+
+  void getStorageData() async {
+    setState(() {
+      loading = true;
+    });
+    String folderPath = "banners";
+    List<String> downloadURLs = await listFilesInFolder(folderPath);
+    banners = downloadURLs;
+
+    if (downloadURLs.isNotEmpty) {
+      for (String url in downloadURLs) {
+        print("Download URL: $url");
+        // Use the downloadURLs as needed (e.g., display images in Flutter)
+      }
+    } else {
+      print("No files found in the folder.");
+      // Handle the case where no files are found
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  Future<List<String>> listFilesInFolder(String folderPath) async {
+    Reference ref =
+        FirebaseStorage.instanceFor(bucket: "gs://hair-salon-c9251.appspot.com")
+            .ref()
+            .child(folderPath);
+
+    try {
+      ListResult result = await ref.listAll();
+      List<String> downloadURLs = [];
+
+      for (Reference item in result.items) {
+        String downloadURL = await item.getDownloadURL();
+        downloadURLs.add(downloadURL);
+      }
+
+      return downloadURLs;
+    } catch (e) {
+      print("Error listing files: $e");
+      return []; // Handle the error
+    }
+  }
+
+  @override
+  void initState() {
+    getStorageData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -154,70 +210,48 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 SizedBox(height: size.height * 0.03),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          'assets/images/getting_haircut.jpg',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: size.height * 0.14,
-                        left: size.width * 0.03,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: const Color.fromARGB(255, 103, 79, 70),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0).copyWith(
-                              left: 9,
-                              right: 9,
-                            ),
-                            child: const Text(
-                              '30% OFF',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
-                              ),
+                (!loading)
+                    ? SizedBox(
+                        height: size.height * 0.23,
+                        child: Swiper(
+                          itemCount: banners.length,
+                          autoplay: true,
+                          itemBuilder: (context, index) {
+                            return BannersListTile(
+                              imageUrl: banners[index],
+                            );
+                          },
+                          pagination: const SwiperPagination(
+                            alignment: Alignment.bottomCenter,
+                            builder: DotSwiperPaginationBuilder(
+                              activeColor: Colors.grey,
+                              color: Colors.white,
                             ),
                           ),
                         ),
+                      )
+                    // SizedBox(
+                    //     height: size.height * 0.23,
+                    //     child: ListView.separated(
+                    //       itemBuilder: (context, index) => Padding(
+                    //         padding: const EdgeInsets.all(3.0),
+                    //         child: BannersListTile(
+                    //           imageUrl: banners[index],
+                    //         ),
+                    //       ),
+                    //       separatorBuilder: (context, index) =>
+                    //           const SizedBox(width: 10),
+                    //       itemCount: banners.length,
+                    //       shrinkWrap: true,
+                    //       scrollDirection: Axis.horizontal,
+                    //     ),
+                    //   )
+                    : const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                      Positioned(
-                        bottom: size.height * 0.1,
-                        left: size.width * 0.03,
-                        child: const Text(
-                          'Today\'s Special',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: size.height * 0.04,
-                        left: size.width * 0.03,
-                        child: const Text(
-                          'Get a discount for every service order!\nOnly valid for today!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // BannersListTile(
+                //   imageUrl: banners[0],
+                // ),
                 SizedBox(height: size.height * 0.02),
                 const Text(
                   'Featured Services',
