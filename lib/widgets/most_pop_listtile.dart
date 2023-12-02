@@ -34,7 +34,7 @@ class _MostPopListTileState extends State<MostPopListTile> {
               width: size.width * 0.3,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
+                child: Image.network(
                   widget.image,
                   fit: BoxFit.cover,
                 ),

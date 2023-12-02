@@ -1,7 +1,9 @@
 import 'package:card_swiper/card_swiper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_salon/model/shop.dart';
 import 'package:hair_salon/view/categories.dart';
 import 'package:hair_salon/view/check_auth.dart';
 import 'package:hair_salon/widgets/banners_listile.dart';
@@ -52,24 +54,7 @@ class _HomePageState extends State<HomePage> {
     false,
     false,
   ];
-  final List<String> name = [
-    "Tanishx Unisex Salon",
-    "Royal Touch Salon",
-    "Hair Direction Salon"
-  ];
-  final List<String> loc = [
-    "Jankpuri, New Delhi",
-    "Tilak Nagar, New Delhi",
-    "Tilak Nagar, New Delhi",
-  ];
-  final List<String> image = [
-    "assets/images/barber1.jpeg",
-    "assets/images/barber4.jpeg",
-    "assets/images/barber3.jpg"
-  ];
-  final List<String> dist = ["1.2km", "800m", "900m"];
-  final List<String> reviews = ["256", "154", "156"];
-  final List<String> stars = ["4.8", "4.5", "4.6"];
+  final List<Shop> shops = [];
   bool loading = true;
 
   void getStorageData() async {
@@ -81,10 +66,10 @@ class _HomePageState extends State<HomePage> {
     banners = downloadURLs;
 
     if (downloadURLs.isNotEmpty) {
-      for (String url in downloadURLs) {
-        print("Download URL: $url");
-        // Use the downloadURLs as needed (e.g., display images in Flutter)
-      }
+      // for (String url in downloadURLs) {
+      //   print("Download URL: $url");
+      //   // Use the downloadURLs as needed (e.g., display images in Flutter)
+      // }
     } else {
       print("No files found in the folder.");
       // Handle the case where no files are found
@@ -116,9 +101,34 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void getShopData() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('shops');
+    var res = await users.get();
+    res.docs.forEach(
+      (element) async {
+        var shop = await users.doc(element.id).get();
+        var data = shop.data() as Map<String, dynamic>;
+        if (data.isNotEmpty) {
+          shops.add(
+            Shop(
+              name: data['name'],
+              email: data['email'],
+              location: data['location'],
+              distance: data['distance'],
+              stars: data['stars'],
+              reviews: data['reviews'],
+              imageUrl: data['imageUrl'],
+            ),
+          );
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     getStorageData();
+    getShopData();
     super.initState();
   }
 
@@ -396,17 +406,17 @@ class _HomePageState extends State<HomePage> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) => MostPopListTile(
-                    image: image[index],
-                    name: name[index],
-                    loc: loc[index],
-                    dist: dist[index],
-                    stars: stars[index],
-                    reviews: reviews[index],
+                    image: shops[index].imageUrl,
+                    name: shops[index].name,
+                    loc: shops[index].location,
+                    dist: shops[index].distance,
+                    stars: shops[index].stars,
+                    reviews: shops[index].reviews,
                   ),
                   separatorBuilder: (context, index) => const SizedBox(
                     height: 15,
                   ),
-                  itemCount: 3,
+                  itemCount: shops.length,
                 ),
                 SizedBox(height: size.height * 0.02),
                 GestureDetector(
