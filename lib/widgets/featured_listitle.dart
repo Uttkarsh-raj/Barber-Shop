@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class FeaturedListTile extends StatefulWidget {
-  const FeaturedListTile({super.key});
+  const FeaturedListTile(
+      {super.key,
+      required this.name,
+      required this.oPrice,
+      required this.nPrice,
+      required this.image});
+  final String name, oPrice, nPrice, image;
 
   @override
   State<FeaturedListTile> createState() => _FeaturedListTileState();
@@ -31,8 +37,8 @@ class _FeaturedListTileState extends State<FeaturedListTile> {
             child: SizedBox(
               height: size.height,
               width: size.width,
-              child: Image.asset(
-                'assets/images/beard trimming.jpeg',
+              child: Image.network(
+                widget.image,
                 fit: BoxFit.cover,
               ),
             ),
@@ -49,14 +55,14 @@ class _FeaturedListTileState extends State<FeaturedListTile> {
                 ),
                 color: Colors.white,
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(13.0),
+              child: Padding(
+                padding: const EdgeInsets.all(13.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Featured Services',
-                      style: TextStyle(
+                      widget.name,
+                      style: const TextStyle(
                         // color: Colors.white,
                         fontSize: 16,
                         letterSpacing: 0.02,
@@ -66,18 +72,18 @@ class _FeaturedListTileState extends State<FeaturedListTile> {
                     Row(
                       children: [
                         Text(
-                          'Rs 200',
-                          style: TextStyle(
+                          'Rs ${widget.nPrice}',
+                          style: const TextStyle(
                             // color: Colors.white,
                             fontSize: 16,
                             letterSpacing: 0.02,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 6),
                         Text(
-                          'Rs 300',
-                          style: TextStyle(
+                          'Rs ${widget.nPrice}',
+                          style: const TextStyle(
                             decoration: TextDecoration.lineThrough,
                             color: Colors.grey,
                             fontSize: 14,

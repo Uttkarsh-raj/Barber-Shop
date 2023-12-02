@@ -47,7 +47,7 @@ class _VerificationPageState extends State<VerificationPage> {
             content: Text(
               e.toString(),
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 16,
                 color: Colors.white,
               ),
             ),

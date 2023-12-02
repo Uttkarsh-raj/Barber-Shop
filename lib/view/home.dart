@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_salon/model/featured.dart';
 import 'package:hair_salon/model/shop.dart';
 import 'package:hair_salon/view/categories.dart';
 import 'package:hair_salon/view/check_auth.dart';
@@ -20,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<String> banners = [];
+  List<Featured> featured = [];
   final List<String> icons = [
     'assets/icons/scissors.png',
     'assets/icons/makeup_icon.png',
@@ -56,6 +58,7 @@ class _HomePageState extends State<HomePage> {
   ];
   final List<Shop> shops = [];
   bool loading = true;
+  bool floading = true;
 
   void getStorageData() async {
     setState(() {
@@ -125,10 +128,39 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void getFeaturedData() async {
+    setState(() {
+      floading = true;
+    });
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('featured');
+    var res = await users.get();
+    res.docs.forEach(
+      (element) async {
+        var shop = await users.doc(element.id).get();
+        var data = shop.data() as Map<String, dynamic>;
+        if (data.isNotEmpty) {
+          featured.add(
+            Featured(
+              name: data['name'],
+              oPrice: data['oldPrice'],
+              nPrice: data['newPrice'],
+              imageUrl: data['imageUrl'],
+            ),
+          );
+        }
+      },
+    );
+    setState(() {
+      floading = false;
+    });
+  }
+
   @override
   void initState() {
     getStorageData();
     getShopData();
+    getFeaturedData();
     super.initState();
   }
 
@@ -275,20 +307,29 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 10),
                 // FeaturedListTile(),
-                SizedBox(
-                  height: size.height * 0.23,
-                  child: ListView.separated(
-                    itemBuilder: (context, index) => const Padding(
-                      padding: EdgeInsets.all(3.0),
-                      child: FeaturedListTile(),
-                    ),
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(width: 10),
-                    itemCount: 3,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                  ),
-                ),
+                (!floading)
+                    ? SizedBox(
+                        height: size.height * 0.23,
+                        child: ListView.separated(
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: FeaturedListTile(
+                              name: featured[index].name,
+                              oPrice: featured[index].oPrice,
+                              nPrice: featured[index].nPrice,
+                              image: featured[index].imageUrl,
+                            ),
+                          ),
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(width: 10),
+                          itemCount: featured.length,
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                        ),
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                 SizedBox(height: size.height * 0.02),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
